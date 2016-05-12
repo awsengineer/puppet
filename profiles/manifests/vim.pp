@@ -13,8 +13,10 @@ class profiles::vim {
   }
 
   exec{'puppet-syntax-vim':
-    command => "/usr/bin/rm -fr ~/.vim ; /usr/bin/git clone https://github.com/puppetlabs/puppet-syntax-vim.git ~/.vim",
-    require => [Package['git'],Service['proxy']]
+    path    => "/usr/bin",
+    command => "rm -fr /root/.vim; git clone https://github.com/puppetlabs/puppet-syntax-vim.git /root/.vim",
+    require => [Package['git'],Service['proxy']],
+    onlyif  => "test -z $(find /root/.vim/ | wc -l | grep 225)",
   }
 
   package {'git':

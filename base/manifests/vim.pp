@@ -13,11 +13,21 @@ class base::vim {
   }
 
   exec{'puppet-syntax-vim':
-    command => "/usr/bin/rm -fr ~/.vim ; /usr/bin/git clone https://github.com/puppetlabs/puppet-syntax-vim.git ~/.vim",
-    require => [Package['git'],Service['proxy']]
+    path => '/usr/bin',
+    command => 'rm -fr /root/.vim*; git clone https://github.com/puppetlabs/puppet-syntax-vim.git /root/.vim; wget https://raw.githubusercontent.com/awsengineer/puppet/master/base/files/vimrc -O /root/.vimrc',
+    require => [Package['git']],
+    onlyif  => "test -z $(find /root/.vim/ | wc -l | grep 225)",
   }
 
-  package {'git':
-    ensure => installed
+
+  package {['git','gem']:
+    ensure => installed,
   }
+
+  package {'puppet-lint':
+    ensure   => installed,
+    provider => gem,
+    require  => Package['gem']
+  }
+
 }
